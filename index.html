@@ -2,22 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>كاميرا برصيد - موقع زهراء الخيالي</title>
+    <title>موقع زهراء الوهمي</title>
     <style>
         body {
-            background: url('https://example.com/bint.jpg') no-repeat center center fixed;
+            background: url('https://picsum.photos/1920/1080') no-repeat center center fixed;
             background-size: cover;
-            color: #00FF00; /* أخضر صارخ */
+            color: #00FF00;
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
         }
         .container {
-            background-color: rgba(0, 0, 255, 0.7); /* أزرق شبه شفاف */
+            background-color: rgba(0, 0, 255, 0.7);
             padding: 20px;
             border-radius: 10px;
             margin: auto;
             width: 50%;
+            backdrop-filter: blur(5px); /* تأثير ضبابي ليبدو أجمل */
         }
         input, select {
             margin: 10px;
@@ -36,8 +37,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>مرحبًا بك في كاميرا برصيد!</h1>
-        <p>املأ الحقول التالية ببياناتك الوهمية:</p>
+        <h1>مرحبًا بك في الموقع الوهمي!</h1>
+        <p>املأ الحقول ببياناتك الوهمية:</p>
         
         <form>
             <input type="text" placeholder="حسابك" required><br>
@@ -47,12 +48,8 @@
                 <option value="asia">آسيا فقط</option>
             </select><br>
             
-            <button type="submit">إرسال الأوهام</button>
+            <button type="submit">إرسال</button>
         </form>
     </div>
-
-    <audio autoplay loop hidden>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
 </body>
-        </html>
+</html>
